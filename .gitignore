@@ -1,0 +1,15 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+
+# Variables de entorno (NUNCA subir el token)
+.env
+.env.*
+!.env.example
+
+# Logs y otros
+*.log
+coverage/
+.DS_Store

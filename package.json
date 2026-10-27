@@ -1,0 +1,39 @@
+{
+  "name": "github-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server para automatizar operaciones de GitHub con lenguaje natural desde un agente de IA",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "inspector": "npx @modelcontextprotocol/inspector node dist/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "github",
+    "ai-agents",
+    "octokit"
+  ],
+  "author": "Agustín Vásquez",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@octokit/rest": "^22.0.1",
+    "dotenv": "^18.0.9",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
