@@ -1,11 +1,17 @@
+// =====================================================
+// Entry point del MCP Server de GitHub.
+// - Carga variables de entorno
+// - Registra las tools
+// - Se comunica con el host (Antigravity / Inspector) por stdio
+// =====================================================
+
 import dotenv from "dotenv";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { registerAllTools } from "./tools/index.js";
 import { logger } from "./utils/logging.js";
 
-// Cargamos las variables del .env.
-// quiet: true evita que dotenv escriba mensajes en stdout (rompería MCP).
+// quiet: true evita que dotenv escriba en stdout (rompería el protocolo MCP).
 dotenv.config({ quiet: true });
 
 const server = new McpServer({
@@ -13,31 +19,19 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// Tool de prueba (la reemplazaremos por las tools de GitHub en el Hito 5)
-server.registerTool(
-  "saludar",
-  {
-    title: "Saludar",
-    description:
-      "Devuelve un saludo personalizado. Úsala solo para comprobar que el servidor MCP responde.",
-    inputSchema: {
-      nombre: z.string().describe("Nombre de la persona a saludar"),
-    },
-  },
-  async ({ nombre }) => {
-    logger.info("Tool ejecutada", { tool: "saludar" });
-    return {
-      content: [
-        { type: "text", text: `¡Hola ${nombre}! El servidor MCP está funcionando.` },
-      ],
-    };
-  }
-);
+registerAllTools(server);
 
 async function main() {
+  if (!process.env.GITHUB_TOKEN) {
+    // No cortamos el servidor: las tools devolverán un mensaje claro al LLM.
+    logger.warn(
+      "GITHUB_TOKEN no está configurado. Las tools devolverán un error de autenticación hasta que se configure."
+    );
+  }
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  logger.info("Servidor MCP iniciado y escuchando por stdio");
+  logger.info("Servidor MCP de GitHub iniciado y escuchando por stdio");
 }
 
 main().catch((error) => {
